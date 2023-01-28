@@ -12,33 +12,44 @@ const STORAGE_KEY = 'feedback-form-state';
 refs.form.addEventListener('input', throttle(onFormChange, 500));
 refs.form.addEventListener('submit', onSubmit);
 
-const formData = {};
-
 populateForm();
 
 function onFormChange(evt) {
-  formData[evt.target.name] = evt.target.value;
 
-  const stringFormData = JSON.stringify(formData);
+  let savedFormData = localStorage.getItem(STORAGE_KEY);
+  // check if localStorage has some data
+  savedFormData = savedFormData ? JSON.parse(savedFormData) : {};
+  // write new typed data in object
+  savedFormData[evt.target.name] = evt.target.value;
+  // inject object in localStorage
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(savedFormData));
 
-  localStorage.setItem(STORAGE_KEY, stringFormData);
 }
 
 function populateForm() {
-  const savedFormData = JSON.parse(localStorage.getItem(STORAGE_KEY));
-// В случае если пользователь ввёл только одно поле и перезагрузил страницу обычно второе поле получило бы undefined, а с это проверкой останется пустое.
-  
-    if (savedFormData?.message) {
-    refs.textarea.value = savedFormData.message;
-    }
-    if (savedFormData?.email) {
-      refs.email.value = savedFormData.email;
-    }
+  let savedFormData = localStorage.getItem(STORAGE_KEY);
+
+  if (savedFormData) {
+    savedFormData = JSON.parse(savedFormData)
+    Object.entries(savedFormData).forEach(([name, value]) => {      
+      refs.form[name].value = value;
+    })
+  } 
 }
 
 function onSubmit(evt) {
   evt.preventDefault();
+
+  const {
+    elements: { email, message },
+  } = evt.currentTarget;
+
+   if (email.value === '' || message.value === '') {
+         return alert('Все поля должны быть заполнены.');
+   }
   evt.currentTarget.reset();
 
+  console.log(JSON.parse(localStorage.getItem(STORAGE_KEY)));
   localStorage.removeItem(STORAGE_KEY);
 }
+ 

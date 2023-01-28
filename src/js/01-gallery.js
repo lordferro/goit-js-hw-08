@@ -7,7 +7,7 @@ const listEl = document.querySelector('.gallery');
 
 const listItemsMarkup = makeListMarkup(galleryItems);
 
-listEl.innerHTML = listItemsMarkup;
+listEl.insertAdjacentHTML("afterbegin" , listItemsMarkup);
 
 function makeListMarkup(items) {
   return items
