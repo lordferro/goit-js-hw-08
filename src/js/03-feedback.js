@@ -31,6 +31,7 @@ function populateForm() {
 
   if (savedFormData) {
     savedFormData = JSON.parse(savedFormData)
+    // using this method we avoiding situation when abscent of one propery give us undefined 
     Object.entries(savedFormData).forEach(([name, value]) => {      
       refs.form[name].value = value;
     })
